@@ -16,14 +16,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
+try:
+    import simplejson
+    json = simplejson
+except ImportError:
+    import json
+
 import urlparse
 
 import httplib2
+# TODO(jkoelker) Convert this to mock
 import mox
 
-from melange_client import client
-from melange_client import tests
+from melange.client import client
+from melange.client import tests
 
 
 class TestAuthorizationClient(tests.BaseTest):

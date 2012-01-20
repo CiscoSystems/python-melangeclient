@@ -15,12 +15,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import sys
 import urlparse
 
-from melange_client import client
-from melange_client import utils
+from melange.client import client
+from melange.client import utils
 
 
 class Factory(object):
@@ -71,12 +70,12 @@ class Resource(object):
     def create(self, **kwargs):
         return self.request("POST",
                             self.path,
-                            body=json.dumps({self.name: kwargs}))
+                            body=utils.dumps({self.name: kwargs}))
 
     def update(self, id, **kwargs):
         return self.request("PUT",
                             self._member_path(id),
-                            body=json.dumps(
+                            body=utils.dumps(
                                 {self.name: utils.remove_nones(kwargs)}))
 
     def all(self, **params):
@@ -99,7 +98,7 @@ class Resource(object):
             kwargs['headers']['X-AUTH-TOKEN'] = self.auth_client.get_token()
         result = self.client.do_request(method, path, **kwargs).read()
         if result:
-            return json.loads(result)
+            return utils.loads(result)
 
 
 class BaseClient(object):

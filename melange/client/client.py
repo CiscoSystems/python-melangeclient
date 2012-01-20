@@ -15,14 +15,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 import httplib
 import httplib2
-import json
 import socket
 import urllib
 import urlparse
 
-from melange_client import exception
+from melange.client import exception
+from melange.client import utils
 
 
 class HTTPClient(object):
@@ -75,7 +76,7 @@ class AuthorizationClient(httplib2.Http):
         if self.auth_token:
             return self.auth_token
         headers = {'content-type': 'application/json'}
-        request_body = json.dumps({"passwordCredentials":
+        request_body = utils.dumps({"passwordCredentials":
                                        {"username": self.username,
                                         'password': self.access_key}})
         res, body = self.request(self.url, "POST", headers=headers,
@@ -83,4 +84,4 @@ class AuthorizationClient(httplib2.Http):
         if int(res.status) >= 400:
             raise Exception(_("Error occured while retrieving token : %s")
                               % body)
-        return json.loads(body)['auth']['token']['id']
+        return utils.loads(body)['auth']['token']['id']

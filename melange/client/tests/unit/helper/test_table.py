@@ -16,8 +16,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from melange_client import tests
-from melange_client.views.helpers import table
+from melange.client import tests
+from melange.client.views.helpers import table
 
 
 class TestTable(tests.BaseTest):

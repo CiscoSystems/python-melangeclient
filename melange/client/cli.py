@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2011 OpenStack LLC.
@@ -29,22 +28,11 @@ from os import environ as env
 import sys
 import yaml
 
-# If ../melange_client/__init__.py exists, add ../ to Python search path, so
-# it will override what happens to be installed in /usr/(local/)lib/python...
-possible_topdir = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]),
-                                   os.pardir,
-                                   os.pardir))
-if os.path.exists(os.path.join(possible_topdir,
-                               'melange_client',
-                               '__init__.py')):
-    sys.path.insert(0, possible_topdir)
-
-import melange_client
-from melange_client import client as base_client
-from melange_client import exception
-from melange_client import inspector
-from melange_client import ipam_client
-from melange_client import template
+from melange.client import client as base_client
+from melange.client import exception
+from melange.client import inspector
+from melange.client import ipam_client
+from melange.client import template
 
 
 def create_options(parser):
@@ -164,7 +152,10 @@ def auth_client(options):
 def view(data, template_name):
     data = data or {}
     try:
-        view_path = os.path.join(melange_client.melange_root_path(), 'views')
+        # TODO(jkoelker) Templates should be using the PEP302 get_data api
+        melange_client_file = sys.modules['melange.client'].__file__
+        melange_path = os.path.dirname(melange_client_file)
+        view_path = os.path.join(melange_path, 'views')
         return template.template(template_name,
                                  template_lookup=[view_path], **data)
     except exception.TemplateNotFoundError:
@@ -179,17 +170,19 @@ def args_to_dict(args):
                                            "of the form of field=value")
 
 
-def main():
+def main(script_name=None, argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    if script_name is None:
+        script_name = os.path.basename(sys.argv[0])
+
     oparser = optparse.OptionParser(version='%%prog 0.1',
                                     usage=usage())
     create_options(oparser)
-    (options, args) = parse_options(oparser, sys.argv[1:])
+    (options, args) = parse_options(oparser, argv)
 
-    script_name = os.path.basename(sys.argv[0])
     category = args.pop(0)
-    http_client = base_client.HTTPClient(options.host,
-                                         options.port,
-                                         options.timeout)
 
     factory = ipam_client.Factory(options.host,
                                   options.port,
@@ -246,7 +239,3 @@ def main():
         else:
             print _("Command failed, please check log for more info")
         sys.exit(2)
-
-
-if __name__ == '__main__':
-    main()

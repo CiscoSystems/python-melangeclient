@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2011 OpenStack LLC.
@@ -15,20 +16,26 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import ConfigParser
-import os
 
-import melange_client
-from melange_client import utils
+class ClientConnectionError(Exception):
+    """Error resulting from a client connecting to a server"""
+    pass
 
 
-def run(command, **kwargs):
-    config = ConfigParser.ConfigParser()
-    config.read(os.path.join(melange_client.melange_root_path(),
-                             "tests/functional/tests.conf"))
-    full_command = "{0} --host={1} --port={2} {3} -v ".format(
-                    melange_client.melange_bin_path('melange'),
-                    config.get('DEFAULT', 'server_name'),
-                    config.get('DEFAULT', 'server_port'),
-                    command)
-    return utils.execute(full_command, **kwargs)
+class MelangeClientError(Exception):
+
+    def __init__(self, message):
+        super(MelangeClientError, self).__init__(message)
+
+
+class TemplateNotFoundError(Exception):
+
+    def __init__(self, message=None):
+        message = message or "template not found"
+        super(TemplateNotFoundError, self).__init__(message)
+
+
+class MelangeServiceResponseError(Exception):
+
+    def __init__(self, error):
+        super(MelangeServiceResponseError, self).__init__(error)

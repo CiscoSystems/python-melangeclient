@@ -16,8 +16,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from melange_client import tests
-from melange_client import inspector
+from melange.client import tests
+from melange.client import inspector
 
 
 class TestMethodInspector(tests.BaseTest):

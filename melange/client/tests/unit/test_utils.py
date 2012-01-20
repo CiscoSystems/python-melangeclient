@@ -15,8 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from melange_client import tests
-from melange_client import utils
+from melange.client import tests
+from melange.client import utils
 
 
 class TestUtils(tests.BaseTest):

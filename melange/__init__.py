@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2011 OpenStack LLC.
@@ -15,27 +14,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
-from openstack.common import exception as openstack_exception
-
-
-ClientConnectionError = openstack_exception.ClientConnectionError
+import pkgutil
 
 
-class MelangeClientError(Exception):
-
-    def __init__(self, message):
-        super(MelangeClientError, self).__init__(message)
-
-
-class TemplateNotFoundError(Exception):
-
-    def __init__(self, message=None):
-        message = message or "template not found"
-        super(TemplateNotFoundError, self).__init__(message)
-
-
-class MelangeServiceResponseError(Exception):
-
-    def __init__(self, error):
-        super(MelangeServiceResponseError, self).__init__(error)
+__path__ = pkgutil.extend_path(__path__, __name__)

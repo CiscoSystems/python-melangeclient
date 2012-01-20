@@ -16,8 +16,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from melange_client import ipam_client
-from melange_client import tests
+from melange.client import ipam_client
+from melange.client import tests
 
 
 class TestFactory(tests.BaseTest):

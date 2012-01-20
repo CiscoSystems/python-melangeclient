@@ -4,9 +4,8 @@ local_settings.py
 keeper
 build/*
 build-stamp
-melange.egg-info
-.melange-venv
-.venv
+python_melangeclient.egg-info
+.tox
 *.sqlite
 *.log
 tags

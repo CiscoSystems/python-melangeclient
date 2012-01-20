@@ -18,7 +18,7 @@
 import uuid
 import yaml
 
-from melange_client.tests import functional
+from melange.client.tests import functional
 
 
 def create_policy(tenant_id="123"):

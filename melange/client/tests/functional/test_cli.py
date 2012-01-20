@@ -15,15 +15,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import re
 import uuid
 import yaml
 
-from melange_client import tests
-from melange_client import utils
-from melange_client.tests import functional
-from melange_client.tests.functional import template_test_helper
-from melange_client.tests.functional import factory
+from melange.client import tests
+from melange.client import utils
+from melange.client.tests import functional
+from melange.client.tests.functional import template_test_helper
+from melange.client.tests.functional import factory
 
 
 class TestBaseCLI(tests.BaseTest, template_test_helper.TemplateTestHelper):
@@ -109,9 +108,8 @@ class TestIpBlockCLI(TestBaseCLI):
                          sorted(factory.model('ip_blocks', list_res)))
 
     def test_list_without_tenant_id_should_error_out(self):
-        self.assertRaises(RuntimeError,
-                          functional.run,
-                          "ip_block list")
+        err_res = functional.run("ip_block list")
+        self.assertTrue(0 != err_res['exitcode'])
 
 
 class TestSubnetCLI(TestBaseCLI):

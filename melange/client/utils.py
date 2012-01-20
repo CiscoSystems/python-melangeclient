@@ -15,19 +15,29 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import gettext
-import os
+import re
 
-gettext.install('melange', unicode=1)
-
-
-def melange_root_path():
-    return os.path.dirname(__file__)
-
-
-def melange_bin_path(filename="."):
-    return os.path.join(melange_root_path(), "..", "bin", filename)
+try:
+    # For Python < 2.6 or people using a newer version of simplejson
+    import simplejson
+    json = simplejson
+except ImportError:
+    # For Python >= 2.6
+    import json
 
 
-def melange_etc_path(filename="."):
-    return os.path.join(melange_root_path(), "..", "etc", "melange", filename)
+def loads(s):
+    return json.loads(s)
+
+
+def dumps(o):
+    return json.dumps(o)
+
+
+def camelize(string):
+    return re.sub(r"(?:^|_)(.)", lambda x: x.group(0)[-1].upper(), string)
+
+
+def remove_nones(hash):
+    return dict((key, value)
+               for key, value in hash.iteritems() if value is not None)

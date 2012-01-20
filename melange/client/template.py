@@ -41,12 +41,9 @@ import cgi
 import re
 import os
 import functools
-import time
 import tokenize
-import mimetypes
-import datetime
 
-from melange_client import exception
+from melange.client import exception
 
 TEMPLATES = {}
 DEBUG = False
