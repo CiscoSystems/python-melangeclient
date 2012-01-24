@@ -397,7 +397,12 @@ class TestIpRoutesCLI(TestBaseCLI):
 class TestInterfaceCLI(TestBaseCLI):
 
     def test_crud(self):
-        iface = factory.create_interface(tenant_id=self.tenant_id)
+        network_id = uuid.uuid4()
+        block = factory.create_block(cidr="20.1.1.0/24",
+                                     network_id=network_id,
+                                     tenant_id=self.tenant_id)
+        iface = factory.create_interface(network_id=network_id,
+                                         tenant_id=self.tenant_id)
         self.assertShows("interface",
                           iface,
                           parameters="vif_id=%s" % iface['id'])
@@ -438,19 +443,19 @@ class TestAllowedIpCLI(TestBaseCLI):
 
     def test_crud(self):
         network_id = uuid.uuid4()
-        iface = factory.create_interface(network_id=network_id,
-                                          tenant_id=self.tenant_id)
         block = factory.create_block(cidr="20.1.1.0/24",
-                                      network_id=network_id,
-                                      tenant_id=self.tenant_id)
+                                     network_id=network_id,
+                                     tenant_id=self.tenant_id)
+        iface = factory.create_interface(network_id=network_id,
+                                         tenant_id=self.tenant_id)
         ip = factory.create_ip(address="20.1.1.2",
-                                block_id=block['id'],
-                                used_by_tenant=self.tenant_id,
-                                tenant_id=self.tenant_id)
+                               block_id=block['id'],
+                               used_by_tenant=self.tenant_id,
+                               tenant_id=self.tenant_id)
         another_ip = factory.create_ip(address="20.1.1.3",
-                                        block_id=block['id'],
-                                        used_by_tenant=self.tenant_id,
-                                        tenant_id=self.tenant_id)
+                                       block_id=block['id'],
+                                       used_by_tenant=self.tenant_id,
+                                       tenant_id=self.tenant_id)
 
         ip_res = self.command("allowed_ip create",
                               interface_id=iface['id'],
