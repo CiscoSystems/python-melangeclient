@@ -50,8 +50,9 @@ def create_interface(vif_id=None, device_id="device", network_id=None,
     network_id = network_id or uuid.uuid4()
     tenant_id = tenant_id or uuid.uuid4()
     create_res = functional.run("interface create vif_id=%s tenant_id=%s "
-                     "device_id=%s network_id=%s" % (vif_id, tenant_id,
-                                                     device_id, network_id))
+                     "device_id=%s network_id=%s "
+                     "network_tenant_id=%s" % (vif_id, tenant_id, device_id,
+                                              network_id, tenant_id))
     return model("interface", create_res)
 
 

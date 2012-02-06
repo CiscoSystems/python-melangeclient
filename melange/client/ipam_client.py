@@ -315,12 +315,14 @@ class InterfaceClient(BaseClient):
                                   auth_client,
                                   tenant_id)
 
-    def create(self, vif_id, tenant_id, device_id=None, network_id=None):
+    def create(self, vif_id, tenant_id, device_id=None, network_id=None,
+               network_tenant_id=None):
         request_params = dict(id=vif_id,
                               tenant_id=tenant_id,
                               device_id=device_id)
-        if network_id:
-            request_params['network'] = dict(id=network_id)
+        if network_id and network_tenant_id:
+            request_params['network'] = dict(id=network_id,
+                                             tenant_id=network_tenant_id)
 
         return self._resource.create(**request_params)
 
