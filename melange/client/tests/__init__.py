@@ -41,3 +41,7 @@ class BaseTest(unittest.TestCase):
                                                          repr(exception)))
         except exception as error:
             self.assertIn(message, str(error))
+
+    def assertIn(self, test_value, expected_set):
+        msg = "%s did not occur in %s" % (test_value, expected_set)
+        self.assert_(test_value in expected_set, msg)
