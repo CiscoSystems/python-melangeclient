@@ -3,6 +3,7 @@
 local_settings.py
 keeper
 build/*
+ChangeLog
 build-stamp
 python_melangeclient.egg-info
 .tox

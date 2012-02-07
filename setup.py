@@ -15,10 +15,23 @@
 import os
 import sys
 
+from melange.client.openstack.common.setup import parse_requirements
+from melange.client.openstack.common.setup import parse_dependency_links
+from melange.client.openstack.common.setup import write_requirements
+from melange.client.openstack.common.setup import write_git_changelog
+
+from setuptools.command.sdist import sdist
 import setuptools
 
 version = "0.1"
-install_requires = ["httplib2", "pyyaml"]
+
+
+class local_sdist(sdist):
+    """Customized sdist hook - builds the ChangeLog file from VC first"""
+    def run(self):
+        write_git_changelog()
+        sdist.run(self)
+cmdclass = {'sdist': local_sdist}
 
 if sys.version_info < (2, 6):
     install_requires.append("simplejson")
@@ -34,6 +47,8 @@ classifiers = ["Development Status :: 5 - Production/Stable",
 
 console_scripts = ["melange = melange.client.cli:main"]
 
+write_requirements()
+
 
 def read_file(file_name):
         return open(os.path.join(os.path.dirname(__file__),
@@ -46,12 +61,14 @@ setuptools.setup(name="python-melangeclient",
       long_description=read_file("README.rst"),
       license="Apache License, Version 2.0",
       url="https://github.com/openstack/python-melangeclient",
+      cmdclass=cmdclass,
       classifiers=classifiers,
       author="Openstack Melange Team",
       author_email="openstack@lists.launchpad.net",
       include_package_data=True,
       packages=setuptools.find_packages(exclude=["tests"]),
-      install_requires=install_requires,
-      entry_points = {"console_scripts": console_scripts},
+      install_requires=parse_requirements(),
+      dependency_links=parse_dependency_links(),
+      entry_points={"console_scripts": console_scripts},
       zip_safe=False,
 )
