@@ -23,7 +23,7 @@ from melange.client.openstack.common.setup import write_git_changelog
 from setuptools.command.sdist import sdist
 import setuptools
 
-version = "0.1"
+version = "0.2"
 
 
 class local_sdist(sdist):
@@ -71,4 +71,5 @@ setuptools.setup(name="python-melangeclient",
       dependency_links=parse_dependency_links(),
       entry_points={"console_scripts": console_scripts},
       zip_safe=False,
+      namespace_packages=['melange'],
 )
