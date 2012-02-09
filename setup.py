@@ -23,7 +23,7 @@ from melange.client.openstack.common.setup import write_git_changelog
 from setuptools.command.sdist import sdist
 import setuptools
 
-version = "0.2"
+version = "0.2.2"
 
 
 class local_sdist(sdist):
@@ -33,6 +33,7 @@ class local_sdist(sdist):
         sdist.run(self)
 cmdclass = {'sdist': local_sdist}
 
+install_requires = parse_requirements()
 if sys.version_info < (2, 6):
     install_requires.append("simplejson")
 
@@ -67,7 +68,7 @@ setuptools.setup(name="python-melangeclient",
       author_email="openstack@lists.launchpad.net",
       include_package_data=True,
       packages=setuptools.find_packages(exclude=["tests"]),
-      install_requires=parse_requirements(),
+      install_requires=install_requires,
       dependency_links=parse_dependency_links(),
       entry_points={"console_scripts": console_scripts},
       zip_safe=False,

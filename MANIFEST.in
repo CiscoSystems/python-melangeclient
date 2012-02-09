@@ -3,3 +3,4 @@ include openstack-common.conf
 include README.rst
 include tox.ini
 include melange/client/views/*.tpl
+graft tools
