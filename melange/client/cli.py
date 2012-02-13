@@ -111,8 +111,9 @@ def client_category_usage():
 
 
 client_categories = ['ip_block', 'subnet', 'policy', 'unusable_ip_range',
-                     'unusable_ip_octet', 'allocated_ip', 'ip_address',
-                     'ip_route', 'interface', 'mac_address_range',
+                     'unusable_ip_octet', 'allocated_ip',
+                     'tenant_allocated_ip', 'ip_address', 'ip_route',
+                     'interface', 'tenant_interface', 'mac_address_range',
                      'allowed_ip']
 
 

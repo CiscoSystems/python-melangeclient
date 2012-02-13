@@ -54,7 +54,9 @@ class Factory(object):
             raise AttributeError("%s has no attribute %s" %
                                  (self.__class__.__name__, item))
 
-        return cls(self._client(), self._auth_client(), self.tenant_id)
+        return cls(self._client(),
+                   self._auth_client(),
+                   tenant_id=self.tenant_id)
 
 
 class Resource(object):
@@ -239,6 +241,18 @@ class AllocatedIpClient(BaseClient):
 
     TENANT_ID_REQUIRED = False
 
+    def __init__(self, client, auth_client, tenant_id):
+        self._resource = Resource("allocated_ip_addresses",
+                                  "allocated_ip_addresses",
+                                  client,
+                                  auth_client)
+
+    def list(self, used_by_device=None):
+        return self._resource.all(used_by_device=used_by_device)
+
+
+class TenantAllocatedIpClient(BaseClient):
+
     def __init__(self, client, auth_client, tenant_id=None):
         self._resource = Resource("allocated_ip_addresses",
                                   "allocated_ip_addresses",
@@ -312,8 +326,7 @@ class InterfaceClient(BaseClient):
         self._resource = Resource("interfaces",
                                   "interface",
                                   client,
-                                  auth_client,
-                                  tenant_id)
+                                  auth_client)
 
     def create(self, vif_id, tenant_id, device_id=None, network_id=None,
                network_tenant_id=None):
@@ -326,23 +339,32 @@ class InterfaceClient(BaseClient):
 
         return self._resource.create(**request_params)
 
-    def show(self, vif_id):
-        return self._resource.find(vif_id)
-
     def delete(self, vif_id):
         return self._resource.delete(vif_id)
+
+
+class TenantInterfaceClient(BaseClient):
+
+    def __init__(self, client, auth_client, tenant_id=None):
+        self._resource = Resource("interfaces",
+                                  "interface",
+                                  client,
+                                  auth_client,
+                                  tenant_id)
+
+    def show(self, vif_id):
+        return self._resource.find(vif_id)
 
 
 class MacAddressRangeClient(BaseClient):
 
     TENANT_ID_REQUIRED = False
 
-    def __init__(self, client, auth_client, tenant_id=None):
+    def __init__(self, client, auth_client, tenant_id):
         self._resource = Resource("mac_address_ranges",
                                   "mac_address_range",
                                   client,
-                                  auth_client,
-                                  tenant_id)
+                                  auth_client)
 
     def create(self, cidr):
         return self._resource.create(cidr=cidr)

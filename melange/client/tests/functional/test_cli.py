@@ -286,7 +286,10 @@ class TestAllocatedIpAddressCLI(TestBaseCLI):
 
         self.assertEqual([ip1], yaml.load(list_res['out'])['ip_addresses'])
 
-    def test_list_with_tenant(self):
+
+class TestTenantAllocatedIpAddressCLI(TestBaseCLI):
+
+    def test_list(self):
         device1_id, device2_id = uuid.uuid4(), uuid.uuid4()
         tenant1_id, tenant2_id = uuid.uuid4(), uuid.uuid4()
         block = factory.create_block(cidr="30.1.1.1/24",
@@ -307,10 +310,15 @@ class TestAllocatedIpAddressCLI(TestBaseCLI):
                                          tenant_id=self.tenant_id,
                                          used_by_tenant=tenant2_id)
 
-        list_res = functional.run("allocated_ip list -t %s" % tenant1_id)
+        list_res = functional.run("tenant_allocated_ip list -t %s"
+                                  % tenant1_id)
 
         self.assertEqual(sorted([tenant1_ip1, tenant1_ip2]),
                          sorted(yaml.load(list_res['out'])['ip_addresses']))
+
+    def test_raises_error_if_no_tenant_id_specified(self):
+        res = functional.run("tenant_allocated_ip list")
+        self.assertTrue("Please provide a tenant id" in res['out'])
 
 
 class TestIpAddressCLI(TestBaseCLI):
@@ -405,12 +413,30 @@ class TestInterfaceCLI(TestBaseCLI):
                                          tenant_id=self.tenant_id)
         self.assertShows("interface",
                           iface,
+                          command_name="tenant_interface",
                           parameters="vif_id=%s" % iface['id'])
 
         self.command("interface delete", is_tenanted=False, vif_id=iface['id'])
         self.assertResourceNotFound("interface",
                                     iface,
+                                    command_name="tenant_interface",
                                     parameters="vif_id=%s" % iface['id'])
+
+    def test_tenant_id_ignored_when_present(self):
+        network_id = uuid.uuid4()
+        block = factory.create_block(cidr="20.1.1.0/24",
+                                     network_id=network_id,
+                                     tenant_id=self.tenant_id)
+        create_res = self.command("interface create",
+                                  is_tenanted=True,
+                                  network_id=network_id,
+                                  vif_id=uuid.uuid4(),
+                                  tenant_id=self.tenant_id)
+        iface = factory.model('interface', create_res)
+        self.assertShows("interface",
+                          iface,
+                          command_name="tenant_interface",
+                          parameters="vif_id=%s" % iface['id'])
 
 
 class TestMacAddressRangeCLI(TestBaseCLI):
@@ -437,6 +463,13 @@ class TestMacAddressRangeCLI(TestBaseCLI):
         self.assertResourceNotFound('mac_address_range',
                                     rng,
                                     is_tenanted=False)
+
+    def test_tenant_id_ignored_when_present(self):
+        create_res = self.command("mac_address_range create",
+                                  is_tenanted=True,
+                                  cidr="ab-bc-cd-12-23-34/2")
+        rng = factory.model('mac_address_range', create_res)
+        self.assertShows('mac_address_range', rng, is_tenanted=True)
 
 
 class TestAllowedIpCLI(TestBaseCLI):
