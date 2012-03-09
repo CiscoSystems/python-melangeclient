@@ -16,6 +16,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import mock
+
 from melange.client import ipam_client
 from melange.client import tests
 
@@ -34,3 +36,19 @@ class TestFactory(tests.BaseTest):
                                     "Factory has no attribute "
                                     "non_existent_client",
                                      lambda: factory.non_existent_client)
+
+
+class TestIpBlockCreate(tests.BaseTest):
+
+    def test_create_ip_block_with_gateway(self):
+        factory = ipam_client.Factory("host", "8080")
+        client = ipam_client.IpBlockClient(factory._client,
+                                            factory._auth_client, 'fake')
+        with mock.patch('melange.client.ipam_client.Resource.create') as patch:
+            client.create(type='public', cidr='10.0.0.0/24',
+                          gateway='10.0.0.1')
+            patch.assert_called_with(type='public',
+                                     cidr='10.0.0.0/24',
+                                     network_id=None,
+                                     policy_id=None,
+                                     gateway='10.0.0.1')

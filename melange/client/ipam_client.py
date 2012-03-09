@@ -122,11 +122,13 @@ class IpBlockClient(BaseClient):
                                  auth_client,
                                  tenant_id)
 
-    def create(self, type, cidr, network_id=None, policy_id=None):
+    def create(self, type, cidr, network_id=None, policy_id=None,
+               gateway=None):
         return self.resource.create(type=type,
                                     cidr=cidr,
                                     network_id=network_id,
-                                    policy_id=policy_id)
+                                    policy_id=policy_id,
+                                    gateway=gateway)
 
     def list(self):
         return self.resource.all()
